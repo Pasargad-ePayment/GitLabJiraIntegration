@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import requests
 import json
 
+import requests
+from splinter import Browser
 
-gitlab_api_secret = '5L5N4kpo212zVyXHdfbW'
-gitlab_url = 'https://git.etick.ir'
+gitlab_api_secret = 'SECRET_TOKEN'
+gitlab_url = 'https://git.yourdomain.TLD'
 projects_urls_list = []
 
 try:
@@ -22,3 +23,20 @@ except Exception as e:
     exit(1)
 
 print(len(projects_urls_list))
+
+browser = Browser()
+browser.visit('https://git.yourdomain.TLD/users/sign_in')
+browser.fill('username', 'privilaged_user')
+browser.fill('password', 'passwd')
+browser.find_by_name('commit').click()
+
+for url in projects_urls_list:
+    browser.visit(url + '/services/jira/edit')
+    #browser.find_by_id('service_active').click()
+    browser.find_by_id('service_url').first.value = 'http://jira.yourdomain.TLD'
+    browser.find_by_id('service_api_url').first.value = 'http://yourdomain.TLD'
+    browser.find_by_id('service_username').first.value = 'jira_user'
+    browser.find_by_id('service_password').first.value = 'jira_pwd'
+    browser.find_by_id('service_jira_issue_transition_id').first.value = 'done'
+    browser.find_by_text('Test settings and save changes').click()
+    #browser.find_by_text('Cancel').click()
